@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Purepell Revenue & Profitability Worksheet</title>
+    <link rel="stylesheet" href="custom.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+    <script src="custom.js"></script>
+</head>
+<body>
+    
+    <section class="purepell-cal">
+        <div class="purepell-hd">
+            <h1>Purepell Profitability Calculator</h1>
+        </div>
+
+
+
+        <div class="table-blk">
+            <div class="container">
+
+                
+                    <table>
+                        <tr class="heading-tr">
+                            <th class="arrow-th"><span class="arrow"></span></th>
+                            <th class="step-hd">Step 01</th>
+                        </tr>
+
+
+                        <!-- First Step Html Start -->
+
+                        <tr>
+                            <td class="arrow-th"></td>
+
+                            <td>
+
+
+
+                                <div class="step-one-blk">
+
+                                    <div class="pat-total-blk">
+                                        <h3># Patients - Total</h3>
+                                        <input type="number" id="totalPatients" value="4000" oninput="calculate()">
+                                        <small>*Enter the total number of patients in your practice</small>
+                                    </div>
+
+                                    <div class="demograph-blk">
+                                        <h3>% Female to Male Patient Demographics</h3>
+                                        <div class="row demograph-row">
+                                            <div class="col-md-6 female-graph">
+                                                <label>Female</label>
+                                                <input type="number" id="femalePercentage" value="65" oninput="updateMalePercentage()"><div class="perc-blk">%</div>
+                                            </div>
+                                            <div class="col-md-6 male-graph">
+                                                <label>Male</label>
+                                                <input type="number" id="malePercentage" value="35" readonly><div class="perc-blk">%</div>
+                                            </div>
+                                        </div>
+                                        <small>*Enter the percentage of female to male patients in your practice</small>
+                                    </div>
+                                            <script>
+                                                function updateMalePercentage() {
+                                                    const femalePercentageInput = document.getElementById("femalePercentage");
+                                                    const malePercentageInput = document.getElementById("malePercentage");
+
+                                                    // Get the female percentage value
+                                                    let femalePercentage = parseFloat(femalePercentageInput.value) || 0;
+
+                                                    // Calculate the male percentage
+                                                    let malePercentage = 100 - femalePercentage;
+
+                                                    // Ensure male percentage does not go below 0
+                                                    if (malePercentage < 0) {
+                                                        malePercentage = 0;
+                                                        femalePercentageInput.value = 100; // Adjust female percentage to 100 if male goes below 0
+                                                    }
+
+                                                    // Update the male percentage input
+                                                    malePercentageInput.value = malePercentage.toFixed(0); // Optional: format to 2 decimal places
+                                                }
+                                            </script>
+                                        
+
+
+
+                                    <div class="exp-symp">
+                                        <h3>Patients experiencing 3+ symptoms:</h3>
+                                        <ul class="symp-list">
+                                            <li>Lack of energy/fatigue</li>
+                                            <li>Anxiety/depression/moodiness/lack in motivation</li>
+                                            <li>Joint/muscle aches</li>
+                                            <li>Sleep problems</li>
+                                            <li>Decreased mental focus/memory issues</li>
+                                            <li>Muscle loss / strength decline</li>
+                                            <li>Weight gain (despite diet/exercise)</li>
+                                            <li>Rapid hair loss</li>
+                                            <li>Sexual performance/pain/libido issues</li>
+                                            <li>Overall decline in wellbeing</li>
+                                        </ul>
+                                        <div class="sypmt-blk">
+                                            <input type="number" id="patientsWithSymptoms" value="80" oninput="calculate()"><div class="perc-blk">%</div>
+                                        </div>
+                                        <small>*Enter the percentage of Patients experiencing 3+ symptoms</small>
+                                    </div>
+
+
+                                    <div class="brht-blk">
+                                        <h3>Potential # BHRT Patients in your practice</h3>
+                                        <div class="brht-inner-blk result-blk">
+                                            <span id="potentialPatients">0</span>
+                                        </div>
+                                        <small>*The number of potential BHRT patients currently in your practice.</small>
+                                    </div>
+
+
+                                </div>
+
+                            </td>
+                        </tr>
+
+                        <!-- First Step Html End -->
+
+
+
+
+
+                        <tr class="heading-tr">
+                            <th class="arrow-th"><span class="arrow"></span></th>
+                            <th class="step-hd">Step 02</th>
+                        </tr>
+
+
+                        <!-- Second Step Html Start -->
+
+                        <tr>
+                            <td class="arrow-th"></td>
+
+                            <td>
+                                
+
+
+                                <div class="step-one-blk step-two-blk">
+
+                                    
+                                    <div class="lab-blk">
+                                        <h3>Will you use Purepell lab fees and mark them up?</h3>
+                                        <div class="lab-input-blk">
+                                            <label>Lab markup (avg $150)</label>
+                                            <div class="slct-flx">
+                                                <select id="labFees" onchange="toggleLabFeesInput()">
+                                                    <option value="0">No</option>
+                                                    <option value="150">Yes</option>
+                                                </select>
+                                                <div class="slct-ds-inp">
+                                                    <div class="inp-inner">
+                                                        <input type="number" id="customLabFee" placeholder="150" disabled oninput="calculate()">
+                                                        <div class="dollar-blk">$</div>
+                                                    </div>
+                                                    <small>*Enter the number you expect to charge</small>
+                                                </div>
+                                            </div>
+
+                                            <script type="text/javascript">
+                                                function toggleLabFeesInput() {
+                                                    const labFeesDropdown = document.getElementById('labFees');
+                                                    const customLabFeeInput = document.getElementById('customLabFee');
+                                                    
+                                                    if (labFeesDropdown.value === "150") {
+                                                        customLabFeeInput.disabled = false; // Enable input
+                                                        customLabFeeInput.value = ""; // Clear the input
+                                                    } else {
+                                                        customLabFeeInput.disabled = true; // Disable input
+                                                        customLabFeeInput.value = ""; // Clear the input
+                                                        calculate(); // Call calculate to update labFees to 0
+                                                    }
+                                                }
+                                            </script>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="consult-blk">
+                                        <h3>Will you charge a consult fee?</h3>
+                                        <div class="consult-input-blk">
+                                            <label>Fee Charged (avg $250)</label>
+                                            <div class="slct-flx">
+                                                <select id="consultFees" onchange="toggleConsultFeesInput()">
+                                                    <option value="0">No</option>
+                                                    <option value="250">Yes</option>
+                                                </select>
+                                                <div class="slct-ds-inp">
+                                                    <div class="inp-inner">
+                                                        <input type="number" id="customConsultFee" placeholder="250" disabled oninput="calculate()">
+                                                        <div class="dollar-blk">$</div>
+                                                    </div>
+                                                    <small>*Enter the number you expect to charge</small>
+                                                </div>
+                                            </div>
+                                            <script type="text/javascript">
+                                                function toggleConsultFeesInput() {
+                                                    const consultFeesDropdown = document.getElementById('consultFees');
+                                                    const customConsultFeeInput = document.getElementById('customConsultFee');
+                                                    
+                                                    if (consultFeesDropdown.value === "250") {
+                                                        customConsultFeeInput.disabled = false; // Enable input
+                                                        customConsultFeeInput.value = ""; // Clear the input
+                                                    } else {
+                                                        customConsultFeeInput.disabled = true; // Disable input
+                                                        customConsultFeeInput.value = ""; // Clear the input
+                                                        calculate(); // Call calculate to update consultFees to 0
+                                                    }
+                                                }
+                                            </script>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="autoclave-blk">
+                                        <h3>Reusable or Disposable Trocars?</h3>
+                                        <h5>Does your practice have an autoclave?</h5>
+                                        <select id="trocarCost" onchange="calculate()">
+                                            <option value="0">No</option>
+                                            <option value="27.5">Yes</option>
+                                        </select>
+                                        <div class="auto-inst">
+                                            <p>Disposable Trocars:  first 16 free then $27.50 each/procedure</p> 
+                                            <p>Reusable Trocars:  first 2 female + 1 male are free, If Autoclave add 5 @ $400 each at the beginning of Y2</p>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="year-one-blk years-blk">
+                                        <h3>Year 1</h3>
+                                        <p class="year-one-p">New BHRT Patients/Month</p>
+                                        <div class="year-one-row">
+                                            <div class="month-col">
+                                                <div class="month-wrapper">
+                                                    <label>Month 1:</label>
+                                                    <input type="number" id="newPatientsMonth1" value="15" oninput="calculate()">
+                                                </div>
+                                            </div>
+                                            <div class="month-col">
+                                                <div class="month-wrapper">
+                                                    <label>Month 2:</label>
+                                                    <input type="number" id="newPatientsMonth2" value="35" oninput="calculate()">
+                                                </div>
+                                            </div>
+                                            <div class="month-col">
+                                                <div class="month-wrapper">
+                                                    <label>Month 3: </label>
+                                                    <input type="number" id="newPatientsMonth3" value="40" oninput="calculate()">
+                                                </div>
+                                            </div>
+                                            <div class="month-col last-month-col">
+                                                <div class="month-wrapper">
+                                                    <label>Months 4-12: </label>
+                                                    <input type="number" id="newPatientsMonths4To12" value="15" oninput="calculate()">
+                                                </div>
+                                                <small>*Enter your projected number of new BHRT patients (months 4-12)</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="years-blk">
+                                        <div class="years-row row">
+                                            <div class="col-md-5">
+                                                <div class="monthly-wrapper">
+                                                    <h3>Year 2</h3>
+                                                    <p class="year-one-p">New BHRT Patients/Month</p>
+                                                    <div class="month-inp-blk">
+                                                        <label>Months 13-24</label>
+                                                        <input type="number" id="newPatientsYear2" value="20" oninput="calculate()">
+                                                    </div>
+                                                    <small>*Estimated number of BHRT patients in your practice by the end of Year 2</small>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-7">
+                                                <div class="monthly-wrapper">
+                                                    <h3>Year 3</h3>
+                                                    <p class="year-one-p">New BHRT Patients/Month</p>
+                                                    <div class="month-inp-blk">
+                                                        <label>Months 25-36</label>
+                                                        <input type="number" id="newPatientsYear3" value="25" oninput="calculate()">
+                                                    </div>
+                                                    <small>*Estimated number of BHRT patients in your practice by the end of Year 3</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="prac-result">
+                                        <h3>Results For Your Practice:</h3>
+                                        <div class="prac-inner-blk result-blk">
+                                            <span id="totalNewPatients">0</span>
+                                        </div>
+                                        <small>*Number of patients projected to receive Purepell BHRT through Year 3</small>
+                                    </div>
+
+
+                                    <!-- Result Table in Step #2 -->
+
+                                    <!-- Hidden Calculations, Needed to be in Html but not on the page  -->
+
+                                    <div style="display:none;">
+                                        <p>Patient Penetration: <span id="PatientsPenetration">0</span></p>
+                                        <p>Female Patients: <span id="femalePatients">0</span></p>
+                                        <p>Male Patients: <span id="malePatients">0</span></p>
+                                        <p>Total Female Patients Year 1: <span id="totalFemalePatientsYear1">0</span></p>
+                                        <p>Total Female Patients Year 2: <span id="totalFemalePatientsYear2">0</span></p>
+                                        <p>Total Female Patients Year 3: <span id="totalFemalePatientsYear3">0</span></p>
+                                        <p>Total Male Patients Year 1: <span id="totalMalePatientsYear1">0</span></p>
+                                        <p>Total Male Patients Year 2: <span id="totalMalePatientsYear2">0</span></p>
+                                        <p>Total Male Patients Year 3: <span id="totalMalePatientsYear3">0</span></p>
+                                        <p>Total Procedures: <span id="totalProcedures">0</span></p>
+                                        <p>Procedure Revenue: $<span id="procedureRevenue">0</span></p>
+                                        <p>Procedure Cost: $<span id="procedureCost">0</span></p>
+                                        <p>Procedure Profit: $<span id="procedureProfit">0</span></p>
+                                        <p>Supplement Revenue: $<span id="supplementRevenue">0</span></p>
+                                        <p>Consult Revenue: $<span id="consultRevenue">0</span></p>
+                                        <p>Lab Revenue: $<span id="labRevenue">0</span></p>
+                                        <p>Trocar Cost: $<span id="totaltrocarcost">0</span></p>
+                                        <p>Total Income: $<span id="totalIncome">0</span></p>
+                                        <p>Average Revenue Per Procedure: $<span id="avgRevenuePerProcedure">0</span></p>
+                                        <p>Gross Profit: $<span id="Profit">0</span></p>
+                                        <p>Average Gross Profit Per Procedure: $<span id="avgProfitPerProcedure">0</span></p>
+                                        <p>Supplement Revenue per Procedure: $<span id="supplementRevenuePerProcedure">0</span></p>
+                                        <h3>Yearly Breakdown</h3>
+                                        <p>Total Revenue Year 1: $<span id="totalRevenueYear1">0</span></p>
+                                        <p>Total Revenue Year 2: $<span id="totalRevenueYear2">0</span></p>
+                                        <p>Total Revenue Year 3: $<span id="totalRevenueYear3">0</span></p>
+                                        <p>Total Revenue Combined: $<span id="totalRevenueCombined">0</span></p>
+                                        <p>Total Profit Year 1: $<span id="totalProfitYear1">0</span></p>
+                                        <p>Total Profit Year 2: $<span id="totalProfitYear2">0</span></p>
+                                        <p>Total Profit Year 3: $<span id="totalProfitYear3">0</span></p>
+                                        <p>Total Profit Combined: $<span id="totalProfitCombined">0</span></p>
+                                        <p>Total Profit with Nutraceuticals Year 1: $<span id="totalProfitWithNutraceuticalsYear1">0</span></p>
+                                        <p>Total Profit with Nutraceuticals Year 2: $<span id="totalProfitWithNutraceuticalsYear2">0</span></p>
+                                        <p>Total Profit with Nutraceuticals Year 3: $<span id="totalProfitWithNutraceuticalsYear3">0</span></p>
+                                        <p>Total Profit with Nutraceuticals Combined: $<span id="totalProfitWithNutraceuticalsCombined">0</span></p>
+                                    </div>
+                                        <!-- Hidden Calculations, Needed to be in Html but not on the page  -->
+
+                                       
+                                    <div class="result-table">
+                                        <div class="table-hd-blk">
+                                        <h3>3-Year Practice Results</h3>
+                                        </div>
+                                        <table class="result">
+                                            <tr>
+                                                <th>Calculations*</th>
+                                                <th>Total Revenue</th>
+                                                <th>Total Profit</th>
+                                                <th>Total Profit with Nutraceuticals</th>
+                                            </tr>
+
+                                            <tr>
+                                                <td>Year 1</td>
+                                                <td><p>$<span id="test1">0</span></p></td>
+                                                <td><p>$<span id="TEST5">0</span></td></p></td>
+                                                <td><p>$<span id="TEST9">0</span></td></p></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>Year 2</td>
+                                                <td><p>$<span id="TEST2">0</span></p></td>
+                                                <td><p>$<span id="TEST6">0</span></p></td>
+                                                <td><p>$<span id="TEST10">0</span></p></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>Year 3</td>
+                                                <td><p>$<span id="TEST3">0</span></p></td>
+                                                <td><p>$<span id="TEST7">0</span></p></td>
+                                                <td><p>$<span id="TEST11">0</span></p></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>Total Combined</td>
+                                                <td><p>$<span id="TEST4">0</span></p></td>
+                                                <td><p>$<span id="TEST8">0</span></p></td>
+                                                <td><p>$<span id="TEST12">0</span></p></td>
+                                            </tr>
+
+                                        </table>
+                                    </div>
+
+
+
+
+                                    <!-- Result Table in Step #2 -->
+
+
+
+                                    <div class="assumpt-blk">
+                                        <h4>*Data Assumptions:</h4>
+                                        <ul>
+                                            <li>Annual patient retention rate: 80%</li>
+                                            <li>Repellet Frequency: Female every 3 months, Male every 6 months </li>
+                                            <li>Average Pricing: Female: $400, Male $800</li>
+                                            <li>Nutraceutical sales at 50% of patient visits at $33 per order</li>
+                                        </ul>
+                                    </div>
+
+
+
+                                    <!-- Chart Block  -->
+
+                                    <div class="chart-section">
+                                        <div class="chart-abs">
+                                            <div class="chart-hd-blk">
+                                                <h3>3 Year Profitability Proforma</h3>
+                                                <h5>No Capital Investment, No Additional Staff</h5>
+                                            </div>
+                                            <div class="pat-pen">
+                                                <div class="total-pat">
+                                                    <p><span id="totalNewPatients2">0</span> receiving Purepell BHRT</p>
+                                                </div>
+                                            </div>
+                                            <div class="update-blk">
+                                                <button id="updateChartButton" onclick="updateChart()"><img src="https://static.wixstatic.com/media/0b971c_22ebbcd357b34649b3b7dd8a480d9dfa~mv2.png"></button>
+                                                <span>Visualize Your Growth</span>
+                                            </div>
+                                        </div>
+                                        <canvas id="profitChart" width="400" height="200"></canvas>
+                                    </div>
+
+                                    
+                                    <div class="download-blk">
+                                        <button id="downloadPdfButton">Download PDF Report</button>
+                                    </div>
+
+                                    <script>
+                                            let profitChart; // Declare the chart variable globally
+
+                                            window.onload = function() {
+                                                const ctx = document.getElementById('profitChart').getContext('2d');
+                                                createProfitChart(ctx); // Create the chart on page load
+                                            };
+                                            
+                                            function createProfitChart(ctx) {
+                                                const totalProfitWithNutraceuticals = [0, 0, 0, 0]; // Example data
+                                                const totalProfitWithoutNutraceuticals = [0, 0, 0, 0]; // Example data
+
+                                                profitChart = new Chart(ctx, {
+                                                    type: 'line',
+                                                    data: {
+                                                        labels: ['Start', 'Year 1', 'Year 2', 'Year 3'], // X-axis labels
+                                                        datasets: [
+                                                            {
+                                                                label: 'Total Profit with Nutraceuticals',
+                                                                data: totalProfitWithNutraceuticals,
+                                                                borderColor: '#4A4EB9',
+                                                                fill: false,
+                                                                tension: 0.5,
+                                                                datalabels: {
+                                                                    anchor: 'end',
+                                                                    align: 'left',
+                                                                    offset: 10, // Offset for this dataset
+                                                                    formatter: (value, context) => {
+                                                                        // Hide the label for the first data point (dataIndex 0)
+                                                                        if (context.dataIndex === 0) {
+                                                                            return null;
+                                                                        }
+                                                                        // Format the value for other data points
+                                                                        return value.toLocaleString('en-US', { maximumFractionDigits: 0 });
+                                                                    },
+                                                                    font: {
+                                                                        family: 'Poppins',
+                                                                        size: 10,
+                                                                        weight: 'bold'
+                                                                    },
+                                                                    color: '#000'
+                                                                }
+                                                            },
+                                                            {
+                                                                label: 'Total Profit without Nutraceuticals',
+                                                                data: totalProfitWithoutNutraceuticals,
+                                                                borderColor: '#D3D8FA',
+                                                                fill: false,
+                                                                tension: 0.5,
+                                                                datalabels: {
+                                                                    anchor: 'start',
+                                                                    align: 'start',
+                                                                    offset: 10, // Different offset for this dataset
+                                                                    formatter: (value, context) => {
+                                                                        // Hide the label for the first data point (dataIndex 0)
+                                                                        if (context.dataIndex === 0) {
+                                                                            return null;
+                                                                        }
+                                                                        // Format the value for other data points
+                                                                        return value.toLocaleString('en-US', { maximumFractionDigits: 0 });
+                                                                    },
+                                                                    font: {
+                                                                        family: 'Poppins',
+                                                                        size: 10,
+                                                                        weight: 'bold'
+                                                                    },
+                                                                    color: '#000'
+                                                                }
+                                                            }
+                                                        ]
+                                                    },
+                                                    options: {
+                                                        scales: {
+                                                            y: {
+                                                                beginAtZero: true,
+                                                                title: {
+                                                                    display: true,
+                                                                    text: 'Total Profit ($)'
+                                                                }
+                                                            },
+                                                            x: {
+                                                                beginAtZero: true,
+                                                                title: {
+                                                                    display: true,
+                                                                    text: 'Years'
+                                                                }
+                                                            }
+                                                        },
+                                                        plugins: {
+                                                            legend: {
+                                                                display: true,
+                                                                position: 'top',
+                                                            }
+                                                        }
+                                                    },
+                                                    plugins: [ChartDataLabels] // Register the datalabels plugin
+                                                });
+                                            }
+
+                                            function updateChart() {
+                                                // Call the calculate function to perform calculations
+                                                calculate();
+
+                                                // Update the chart data
+                                                const totalProfitWithNutraceuticals = [
+                                                    0,
+                                                    parseCurrency(document.getElementById("TEST9").innerText),
+                                                    parseCurrency(document.getElementById("TEST10").innerText) + parseCurrency(document.getElementById("TEST9").innerText),
+                                                    parseCurrency(document.getElementById("TEST11").innerText) + parseCurrency(document.getElementById("TEST9").innerText) + parseCurrency(document.getElementById("TEST10").innerText)
+                                                ];
+
+                                                const totalProfitWithoutNutraceuticals = [
+                                                    0,
+                                                    parseCurrency(document.getElementById("TEST5").innerText),
+                                                    parseCurrency(document.getElementById("TEST6").innerText) + parseCurrency(document.getElementById("TEST5").innerText),
+                                                    parseCurrency(document.getElementById("TEST7").innerText) + parseCurrency(document.getElementById("TEST5").innerText) + parseCurrency(document.getElementById("TEST6").innerText)
+                                                ];
+
+                                                // Update the chart datasets
+                                                profitChart.data.datasets[0].data = totalProfitWithNutraceuticals;
+                                                profitChart.data.datasets[1].data = totalProfitWithoutNutraceuticals;
+
+                                                // Refresh the chart
+                                                profitChart.update();
+                                            }
+
+                                            // Function to parse currency values
+                                            function parseCurrency(value) {
+                                                return parseFloat(value.replace(/[$,]/g, '')) || 0; // Remove $ and commas
+                                            }
+                                    </script>
+
+                                    <!-- Chart Block -->
+                                    <script>
+                                        document.getElementById('downloadPdfButton').addEventListener('click', () => {
+
+                                          // Select the specific element you want to capture
+                                          const elementToCapture = document.querySelector('.purepell-cal'); // Use querySelector to select the div by class
+
+                                          // Ensure the element is visible and fully loaded
+                                          if (elementToCapture) {
+
+                                            html2canvas(elementToCapture, { scale: 1 }).then(canvas => {
+
+                                              // Create a new jsPDF instance
+                                              const { jsPDF } = window.jspdf;
+                                              const pdf = new jsPDF();
+
+                                              // Get the dimensions of the canvas and the PDF page
+                                              const canvasWidth = canvas.width;
+                                              const canvasHeight = canvas.height;
+                                              const pdfWidth = pdf.internal.pageSize.width;
+                                              const pdfHeight = pdf.internal.pageSize.height;
+
+                                              // Calculate the aspect ratios of the canvas and the PDF page
+                                              const canvasAspectRatio = canvasWidth / canvasHeight;
+                                              const pdfAspectRatio = pdfWidth / pdfHeight;
+
+                                              // Determine how the canvas should fit within the PDF page
+                                              let fitType;
+                                              if (canvasAspectRatio > pdfAspectRatio) {
+                                                fitType = 'width'; // Fit to width
+                                              } else {
+                                                fitType = 'height'; // Fit to height
+                                              }
+
+                                              // Calculate the scaled dimensions based on the fit type
+                                              let scaledWidth, scaledHeight;
+                                              if (fitType === 'width') {
+                                                scaledWidth = pdfWidth;
+                                                scaledHeight = scaledWidth / canvasAspectRatio;
+                                              } else {
+                                                scaledHeight = pdfHeight;
+                                                scaledWidth = scaledHeight * canvasAspectRatio;
+                                              }
+
+                                              // Check if the scaled image exceeds the maximum page dimensions
+                                              if (scaledWidth > pdfWidth || scaledHeight > pdfHeight) {
+                                                // If so, create a new page and adjust dimensions accordingly
+                                                pdf.addPage();
+                                                scaledWidth = Math.min(scaledWidth, pdfWidth);
+                                                scaledHeight = Math.min(scaledHeight, pdfHeight);
+                                              }
+
+                                              // Calculate the horizontal and vertical offsets for centering
+                                              const horizontalOffset = (pdfWidth - scaledWidth) / 2;
+                                              const verticalOffset = (pdfHeight - scaledHeight) / 2;
+
+                                              // Add the image to the PDF with calculated dimensions and centered position
+                                              pdf.addImage(canvas.toDataURL('image/png'), 'PNG', horizontalOffset, verticalOffset, scaledWidth, scaledHeight);
+
+                                              // Save the PDF with a specific filename
+                                              pdf.save('Report.pdf'); // Change the filename as needed
+
+                                            }).catch(error => {
+                                              console.error('Error capturing the element:', error);
+                                            });
+
+                                          } else {
+                                            console.error('Element with class .purepell-cal not found.');
+                                          }
+
+                                        });
+
+
+
+
+                                        </script>
+
+
+                                </div>
+
+
+
+                            </td>
+
+
+                    </table>
+              
+
+         </div>
+        </div>
+    
+
+    
+
+    </section>
+
+
+
+
+
+
+
+
+    <footer>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    </footer>
+
+
+</body>
+</html>
